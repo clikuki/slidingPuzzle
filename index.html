@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script src="./dest/main.js" type="module"></script>
+		<title>Sliding Blocks</title>
+		<style>
+			:root {
+				--c-primary-500: #03446a;
+				--c-primary-600: #03314c;
+				--c-primary-700: #031723;
+				--c-secondary-500: white;
+			}
+			body {
+				min-height: 100vh;
+				background: #eee;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-evenly;
+				align-items: center;
+				font-family: system-ui;
+				margin: 0;
+			}
+			h1,
+			p {
+				margin: 0;
+			}
+			h1 {
+				border-bottom: 1px solid black;
+			}
+			.cell {
+				position: absolute;
+				width: var(--size, 0);
+				height: var(--size, 0);
+				display: grid;
+				place-content: center;
+				background-color: var(--c-primary-500);
+				color: var(--c-secondary-500);
+				transition: all 500ms;
+				cursor: pointer;
+				user-select: none;
+				box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+				font-size: x-large;
+			}
+			.grid {
+				position: relative;
+				width: var(--size, 0);
+				height: var(--size, 0);
+				padding: var(--padding, 0);
+				background-color: white;
+				border-radius: 10px;
+			}
+			button {
+				margin-top: 1rem;
+				border: none;
+				background-color: var(--c-primary-500);
+				color: white;
+				font-size: x-large;
+				padding: 0.5rem 2rem 0.5rem 2rem;
+				border-radius: 5px;
+				cursor: pointer;
+			}
+			button:hover {
+				background-color: var(--c-primary-600);
+			}
+			button:disabled {
+				background-color: var(--c-primary-700);
+			}
+			.btn-container {
+				display: flex;
+				gap: 1rem;
+				justify-content: center;
+			}
+			a {
+				color: inherit;
+			}
+			.winAnim {
+				animation: winAnim 500ms ease-in-out;
+			}
+			@keyframes winAnim {
+				0% {
+					transform: translateY(0px);
+				}
+				50% {
+					transform: translateY(-20px);
+				}
+				100% {
+					transform: translateY(0px);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<h1>Slide Puzzle</h1>
+			<p>
+				Click on a tile to move it to the empty spot. Order the tiles so
+				that their numbers are all in order.
+			</p>
+		</div>
+		<div class="tmp"></div>
+		<div class="btnContainer">
+			<button class="restartBtn">Shuffle</button>
+			<!-- <button class="solveBtn">Solve</button> -->
+		</div>
+		<p>
+			By:
+			<a href="https://github.com/clikuki" target="_blank">Clikuki</a>
+		</p>
+	</body>
+</html>
