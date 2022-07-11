@@ -53,7 +53,6 @@
 				border-radius: 10px;
 			}
 			button {
-				margin-top: 1rem;
 				border: none;
 				background-color: var(--c-primary-500);
 				color: white;
@@ -68,10 +67,21 @@
 			button:disabled {
 				background-color: var(--c-primary-700);
 			}
-			.btn-container {
+			.btnContainer {
 				display: flex;
 				gap: 1rem;
 				justify-content: center;
+				align-items: center;
+				height: 3rem;
+			}
+			input {
+				width: 5rem;
+			}
+			label {
+				background-color: var(--c-primary-500);
+				color: white;
+				border-radius: 3px;
+				padding: 1rem;
 			}
 			a {
 				color: inherit;
@@ -103,6 +113,10 @@
 		<div class="tmp"></div>
 		<div class="btnContainer">
 			<button class="restartBtn">Shuffle</button>
+			<label>
+				Grid Size:
+				<input class="sizeInput" type="number" min="3" max="10" />
+			</label>
 			<!-- <button class="solveBtn">Solve</button> -->
 		</div>
 		<p>

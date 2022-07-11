@@ -1,6 +1,7 @@
 import { Cell } from './cell.js';
 import { pxIfy } from './pxIfy.js';
-import { cellSize, cellGap, gridPadding, gridSize } from './constants.js';
+import { cellSize, cellGap, gridPadding } from './constants.js';
+import { getGridSize, listen as listenToSizeChange } from './getGridSize.js';
 
 type CellArray = (Cell | null)[];
 
@@ -9,7 +10,7 @@ grid.classList.add('grid');
 grid.style.setProperty('--padding', pxIfy(gridPadding));
 grid.style.setProperty(
 	'--size',
-	pxIfy(gridSize * cellSize + (gridSize - 1) * cellGap),
+	pxIfy(getGridSize() * cellSize + (getGridSize() - 1) * cellGap),
 );
 
 function countInversions(cells: CellArray) {
@@ -25,12 +26,12 @@ function countInversions(cells: CellArray) {
 }
 
 function getIndexRow(index: number) {
-	return Math.floor(index / gridSize);
+	return Math.floor(index / getGridSize());
 }
 
 function isSolvable(cells: CellArray) {
 	const inversions = countInversions(cells);
-	if (gridSize % 2) {
+	if (getGridSize() % 2) {
 		return !Boolean(inversions % 2);
 	} else {
 		const holeRow = getIndexRow(cells.findIndex((c) => !c));
@@ -52,38 +53,15 @@ function shuffleCells() {
 }
 
 function isBeside(a: number, b: number) {
-	if ([a - gridSize, a + gridSize].includes(b)) return true;
+	if ([a - getGridSize(), a + getGridSize()].includes(b)) return true;
 	const aRow = getIndexRow(a);
 	if (a - 1 === b && getIndexRow(a - 1) === aRow) return true;
 	if (a + 1 === b && getIndexRow(a + 1) === aRow) return true;
 }
 
-document.querySelector('.restartBtn')!.addEventListener('click', () => {
-	if (isDoingWinAnimation) return;
-	cells = shuffleCells();
-	cells.forEach((cell, i) => {
-		if (!cell) return;
-		cell.setPosition(i);
-	});
-	holeIndex = cells.findIndex((c) => !c);
-	hasWon = false;
-});
-
-let cells: CellArray = new Array(gridSize ** 2 - 1)
-	.fill(0)
-	.map((_, i) => new Cell((i + 1).toString(), i));
-cells[cells.length] = null;
-cells = shuffleCells();
-grid.append(...cells.filter((c) => c).map((c) => c!.elem));
-document.querySelector('.tmp')!.replaceWith(grid);
-let holeIndex = cells.findIndex((c) => !c);
-
-let isDoingWinAnimation = false;
-let hasWon = false;
-cells.forEach((cell, i) => {
-	if (!cell) return;
+function addCellListener(cell: Cell, i: number) {
 	cell.setPosition(i);
-	cell.elem.addEventListener('click', () => {
+	cell.elem.onclick = () => {
 		if (isDoingWinAnimation) return;
 		if (isBeside(cell.index, holeIndex)) {
 			const prevCellIndex = cell.index;
@@ -111,12 +89,58 @@ cells.forEach((cell, i) => {
 										isDoingWinAnimation = false;
 								}),
 							Math.floor(
-								cell.index / gridSize + (cell.index % gridSize),
+								cell.index / getGridSize() +
+									(cell.index % getGridSize()),
 							) * 150,
 						);
 					});
 				});
 			}
 		}
+	};
+}
+
+document.querySelector('.restartBtn')!.addEventListener('click', () => {
+	if (isDoingWinAnimation) return;
+	cells = shuffleCells();
+	cells.forEach((cell, i) => {
+		if (!cell) return;
+		cell.setPosition(i);
 	});
+	holeIndex = cells.findIndex((c) => !c);
+	hasWon = false;
+});
+
+let cells: CellArray = new Array(getGridSize() ** 2 - 1)
+	.fill(0)
+	.map((_, i) => new Cell((i + 1).toString(), i));
+cells[cells.length] = null;
+cells = shuffleCells();
+grid.append(...cells.filter((c) => c).map((c) => c!.elem));
+document.querySelector('.tmp')!.replaceWith(grid);
+let holeIndex = cells.findIndex((c) => !c);
+
+let isDoingWinAnimation = false;
+let hasWon = false;
+cells.forEach((cell, i) => {
+	if (!cell) return;
+	addCellListener(cell, i);
+});
+
+listenToSizeChange((size) => {
+	grid.style.setProperty(
+		'--size',
+		pxIfy(size * cellSize + (size - 1) * cellGap),
+	);
+	cells = new Array(size ** 2 - 1)
+		.fill(0)
+		.map((_, i) => new Cell((i + 1).toString(), i));
+	cells[cells.length] = null;
+	cells = shuffleCells();
+	grid.replaceChildren(...cells.filter((c) => c).map((c) => c!.elem));
+	cells.forEach((cell, i) => {
+		if (!cell) return;
+		cell.setPosition(i);
+	});
+	holeIndex = cells.findIndex((c) => !c);
 });

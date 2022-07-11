@@ -1,4 +1,5 @@
-import { cellSize, cellGap, gridPadding, gridSize } from './constants.js';
+import { cellSize, cellGap, gridPadding } from './constants.js';
+import { getGridSize } from './getGridSize.js';
 import { pxIfy } from './pxIfy.js';
 export class Cell {
 	elem = document.createElement('div');
@@ -14,6 +15,7 @@ export class Cell {
 	}
 	setPosition(index: number) {
 		this.index = index;
+		const gridSize = getGridSize();
 		const x = index % gridSize;
 		const y = Math.floor(index / gridSize);
 		this.elem.style.left = pxIfy(x * cellSize + x * cellGap + gridPadding);
